@@ -30,5 +30,9 @@ func init() {
 	blog.Init("file.log")
 }
 ```
+
+
 .env file
+```
 LOG_PATH=/my/log/path/
+```
