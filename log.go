@@ -2,7 +2,6 @@ package blog
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path"
 
@@ -15,30 +14,15 @@ var formatSys = logging.MustStringFormatter(
 	`%{color}%{level:.1s} %{time:2006-01-02 15:04:05.000} %{shortpkg} %{shortfile} ▶ %{color:reset} %{message}`,
 )
 
-// Init -
-func Init(name string) {
-	logger = logging.MustGetLogger(name)
+// init -
+func init() {
+	logger = logging.MustGetLogger(path.Base(os.Args[0]))
 	logger.ExtraCalldepth = 1
-	if dir, ok := os.LookupEnv("LOG_PATH"); ok {
-		if _, err := os.Stat(dir); os.IsNotExist(err) {
-			os.Mkdir(dir, os.ModePerm)
-		}
-		lf, err := os.OpenFile(path.Join(dir, name+".log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0664)
-		if err != nil {
-			log.Fatalf("Failed to open log file: %v", err)
-		}
-		logging.SetBackend(
-			logging.NewBackendFormatter(
-				logging.NewLogBackend(lf, "", 0), formatSys,
-			),
-		)
-	} else {
-		logging.SetBackend(
-			logging.NewBackendFormatter(
-				logging.NewLogBackend(os.Stderr, "", 0), formatSys,
-			),
-		)
-	}
+	logging.SetBackend(
+		logging.NewBackendFormatter(
+			logging.NewLogBackend(os.Stderr, "", 0), formatSys,
+		),
+	)
 }
 
 // Debug -
