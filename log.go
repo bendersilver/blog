@@ -2,7 +2,6 @@ package blog
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path"
 
@@ -43,7 +42,7 @@ func init() {
 		}
 		lf, err := os.OpenFile(path.Join(dir, path.Base(os.Args[0])+".log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0664)
 		if err != nil {
-			log.Fatalf("Failed to open log file: %v", err)
+			Fatalf("Failed to open log file: %v", err)
 		}
 		logging.SetBackend(
 			logging.NewBackendFormatter(

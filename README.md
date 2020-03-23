@@ -16,19 +16,7 @@ func main() {
 
 // initial logging .env file or console
 // run myProgramm.bin /path/file/.env
-func init() {
-	var err error
-	switch len(os.Args) {
-	case 2:
-		err = godotenv.Load(os.Args[1])
-	default:
-		err = godotenv.Load()
-	}
-	if err != nil {
-		panic(err)
-	}
-	blog.Init("file.log")
-}
+
 ```
 
 
