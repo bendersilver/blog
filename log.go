@@ -2,9 +2,11 @@ package blog
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path"
 
+	"github.com/joho/godotenv"
 	"github.com/op/go-logging"
 )
 
@@ -16,6 +18,8 @@ var formatSys = logging.MustStringFormatter(
 
 // init -
 func init() {
+	var err error
+
 	logger = logging.MustGetLogger(path.Base(os.Args[0]))
 	logger.ExtraCalldepth = 1
 	logging.SetBackend(
@@ -23,6 +27,30 @@ func init() {
 			logging.NewLogBackend(os.Stderr, "", 0), formatSys,
 		),
 	)
+
+	switch len(os.Args) {
+	case 2:
+		err = godotenv.Load(os.Args[1])
+	default:
+		err = godotenv.Load()
+	}
+	if err != nil {
+		Fatal(err)
+	}
+	if dir, ok := os.LookupEnv("LOG_PATH"); ok {
+		if _, err := os.Stat(dir); os.IsNotExist(err) {
+			os.Mkdir(dir, os.ModePerm)
+		}
+		lf, err := os.OpenFile(path.Join(dir, path.Base(os.Args[0])+".log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0664)
+		if err != nil {
+			log.Fatalf("Failed to open log file: %v", err)
+		}
+		logging.SetBackend(
+			logging.NewBackendFormatter(
+				logging.NewLogBackend(lf, "", 0), formatSys,
+			),
+		)
+	}
 }
 
 // Debug -
